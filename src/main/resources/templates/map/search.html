@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"></html>
+<html lang="en">
+
+<head th:replace="common/head">
+
+</head>
+
+<body>
+
+    <div th:replace="common/header">
+
+    </div>
+
+    <nav th:replace="common/nav">
+
+    </nav>
+
+    <div class="container mt-5">
+
+        <div class="row">
+            <div id="map" style="width:500px; height:400px; margin:0 0;"></div>
+        </div>
+        <br>
+        <table class="table table-hover"></table>
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>장소</th>
+                    <th>위도</th>
+                    <th>경도</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="point : ${points}" th:attr="id=${point.id}">
+                    <br>
+                    <td th:text="${point.id}"></td>
+                    <td th:text="${point.title}"></td>
+                    <td th:text="${point.latitude}"></td>
+                    <td th:text="${point.longitude}"></td>
+                    <button th:onclick="'setCenter('+${point.latitude} + ',' + ${point.longitude}+')'">이동</button>
+                </tr>
+            </tbody>
+        </table> 
+        
+
+
+
+    </div>
+    <script src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=da146a2a6ff6a54903c1d2a7caecd1c7"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script th:inline="javascript">
+        const lat2 = /*[[${points.![latitude]}]]*/ [];
+        const lng2 = /*[[${points.![longitude]}]]*/[];
+        let map;
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            createMap(lat, lng);
+        });
+        function setCenter(lat2,lng2){
+            const moveLatLon = new kakao.maps.LatLng(lat2,lng2);
+            map.setCenter(moveLatLon);
+            markerPosition = new kakao.maps.LatLng(lat2,lng2);
+            marker = new kakao.maps.Marker({
+                position: markerPosition
+            });
+            marker.setMap(map);
+        }
+        function createMap(lat, lng) {
+            const container = document.getElementById('map');
+            const options = {
+                center: new kakao.maps.LatLng(lat, lng),
+                level: 4
+            };
+            map = new kakao.maps.Map(container, options);
+            markerPosition = new kakao.maps.LatLng(lat,lng);
+            marker = new kakao.maps.Marker({
+                position: markerPosition
+            });
+            marker.setMap(map);
+        }
+        
+
+        
+    </script>
+
+    <div th:replace="common/footer">
+    </div>
+
+</body>
+
+</html>
